@@ -53,3 +53,5 @@ _testmain.go
 # generated
 /Coding
 
+# venv
+venv_lattigo
