@@ -15,18 +15,19 @@ if __name__ == "__main__":
     # make experiments directory
     os.makedirs(dir_path + "/experiments", exist_ok=True)
 
-    for data_size in data_sizes:
-        time_start = time.perf_counter()
-        # go run psi/main.go num_parties goroutines logN num_MB
-        result = subprocess.run(["go", "run", "psi/main.go",str(2),str(1),
-                                str(data_size_dict[data_size][0]),
-                                str(data_size_dict[data_size][1]),
-                                data_size]) 
-        time_end = time.perf_counter()
+    for trial in range(num_trials):
+        for data_size in data_sizes:
+            time_start = time.perf_counter()
+            # go run psi/main.go num_parties goroutines logN num_MB
+            result = subprocess.run(["go", "run", "psi/main.go",str(2),str(1),
+                                    str(data_size_dict[data_size][0]),
+                                    str(data_size_dict[data_size][1]),
+                                    data_size]) 
+            time_end = time.perf_counter()
 
-        print(result.stdout)
-        total_time = time_end - time_start
-        print(f"Time taken: {total_time}")
-        with open(f"experiments/{data_size}.csv", "a") as file:
-            writer = csv.writer(file)
-            writer.writerow([total_time])
+            print(result.stdout)
+            total_time = time_end - time_start
+            print(f"Time taken: {total_time}")
+            with open(f"experiments/{data_size}.csv", "a") as file:
+                writer = csv.writer(file)
+                writer.writerow([total_time])
