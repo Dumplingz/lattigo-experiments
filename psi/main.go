@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/csv"
+	"fmt"
+
 	"log"
 	"os"
 	"strconv"
@@ -74,7 +77,7 @@ func main() {
 	// arg2: number of Go routines
 
 	// Largest for n=8192: 512 parties
-	N := 8 // Default number of parties
+	N := 2 // Default number of parties
 	var err error
 	if len(os.Args[1:]) >= 1 {
 		N, err = strconv.Atoi(os.Args[1])
@@ -95,10 +98,15 @@ func main() {
 
 	PlaintextModulus := uint64(65537) // PlaintextModulus
 	if len(os.Args[1:]) >= 4 {
-		PlaintextModulus, err = strconv.ParseUint(os.Args[4],10,64)
+		PlaintextModulus, err = strconv.ParseUint(os.Args[4], 10, 64)
 		check(err)
 	}
 
+	data_size := "1MB" // number of MB
+	if len(os.Args[1:]) >= 5 {
+		data_size = os.Args[5]
+		check(err)
+	}
 
 	// Creating encryption parameters from a default params with logN=14, logQP=438 with a plaintext modulus T=65537
 	params, err := bgv.NewParametersFromLiteral(bgv.ParametersLiteral{
@@ -125,7 +133,7 @@ func main() {
 	P := genparties(params, N)
 
 	// Inputs & expected result
-	expRes := genInputs(params, P)
+	expRes := genTPCHInputs(data_size, params, P)
 
 	// 1) Collective public key generation
 	pk := ckgphase(params, crs, P)
@@ -314,6 +322,69 @@ func genInputs(params bgv.Parameters, P []*party) (expRes []uint64) {
 	}
 
 	return
+}
+
+func genTPCHInputs(data_size string, params bgv.Parameters, P []*party) (expRes []uint64) {
+
+	expRes = make([]uint64, params.N())
+	for i := range expRes {
+		expRes[i] = 1
+	}
+
+	for i, pi := range P {
+
+		encoded, err := OneHotEncodeCSV("../tpch_workdir/"+data_size+"/split0.5/orders"+strconv.Itoa(i+1)+".csv", params.N())
+		if err != nil {
+			panic(err)
+		}
+		pi.input = encoded
+		for i := range pi.input {
+			expRes[i] *= pi.input[i]
+		}
+	}
+
+	return
+}
+
+// OneHotEncodeCSV reads a CSV file with a single column of numbers and returns a one-hot encoded array.
+func OneHotEncodeCSV(filePath string, N int) ([]uint64, error) {
+	// Open the CSV file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	// Create a new CSV reader
+	reader := csv.NewReader(file)
+
+	// Read all records from the CSV file
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read CSV data: %w", err)
+	}
+
+	// Create an array to hold the one-hot encoded data
+	oneHotEncodedArray := make([]uint64, N)
+
+	// Iterate over each record in the CSV file
+	for _, record := range records {
+		for _, value := range record {
+			num, err := strconv.Atoi(value)
+			if err != nil {
+				log.Printf("Skipping invalid number: %s", value)
+				continue
+			}
+
+			if num >= 0 && num < N {
+				oneHotEncodedArray[num] = 1
+			} else {
+				log.Printf("Number %d is out of range for one-hot encoding", num)
+			}
+		}
+	}
+
+	return oneHotEncodedArray, nil
 }
 
 func pcksPhase(params bgv.Parameters, tpk *rlwe.PublicKey, encRes *rlwe.Ciphertext, P []*party) (encOut *rlwe.Ciphertext) {
