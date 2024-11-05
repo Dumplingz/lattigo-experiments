@@ -3,7 +3,7 @@ import time
 import os
 import csv
 
-num_trials = 10
+num_trials = 11
 data_sizes = ["1MB", "10MB", "100MB", "1GB", "10GB"]
 data_size_dict = {"1MB": [10,12289], "10MB": [13,65537], "100MB": [17,786433], "1GB": [20,23068673], "10GB": [23,167772161]}
 
