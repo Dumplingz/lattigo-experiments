@@ -5,7 +5,9 @@ This repository is a fork of the original lattigo repository. It contains the ex
 
 
 ## Setup
+This repository is a submodule of the data-pooling-experiments repository. The tpch data should be set up in that repository before running the experiments in this repository.
 
+Once the tpc-h data has been downloaded and set up, you can run the `main.go` file in the `psi` directory.
 
 # Lattigo: lattice-based multiparty homomorphic encryption library in Go
 
