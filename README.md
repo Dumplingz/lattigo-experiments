@@ -1,3 +1,12 @@
+
+
+# A Fork of the Lattigo repository
+This repository is a fork of the original lattigo repository. It contains the experimental results in the paper "Running Functions on Pooled Data without Leakage: Comparing Solutions Over Scope, Trust, and Performance" for CrypTen and Torch on FashionMNIST and CIFAR datasets, along with the scripts used to run the experiments.
+
+
+## Setup
+
+
 # Lattigo: lattice-based multiparty homomorphic encryption library in Go
 
 <p align="center">
@@ -5,6 +14,9 @@
 </p>
 
 ![Go tests](https://github.com/tuneinsight/lattigo/actions/workflows/ci.yml/badge.svg)
+
+
+
 
 Lattigo is a Go module that implements full-RNS Ring-Learning-With-Errors-based homomorphic-encryption
 primitives and Multiparty-Homomorphic-Encryption-based secure protocols. The library features:
