@@ -1,7 +1,7 @@
 
 
 # A Fork of the Lattigo repository
-This repository is a fork of the original lattigo repository. It contains the experimental results in the paper "Running Functions on Pooled Data without Leakage: Comparing Solutions Over Scope, Trust, and Performance" for CrypTen and Torch on FashionMNIST and CIFAR datasets, along with the scripts used to run the experiments.
+This repository is a fork of the original lattigo repository. It contains the experimental results in the paper "Running Functions on Pooled Data without Leakage: Comparing Solutions Over Scope, Trust, and Performance" for Lattigo, along with the scripts used to run the experiments.
 
 
 ## Setup
